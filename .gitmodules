@@ -1,0 +1,4 @@
+[submodule "Mobility_Challenge_Simulator"]
+	path = Mobility_Challenge_Simulator
+	url = https://github.com/cislab-kaist/Mobility_Challenge_Simulator.git
+	ignore = all

@@ -1,0 +1,20 @@
+{
+    "eventName": "Profile4",
+    "timestamp": "2025.12.15.20.25.41",
+    "vehicles": [
+        {
+            "av": false,
+            "position": {
+                "x": 0.935,
+                "y": 0.718
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 2.226,
+                "y": -0.859
+            }
+        }
+    ]
+}

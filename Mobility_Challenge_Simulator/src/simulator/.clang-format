@@ -1,0 +1,17 @@
+﻿BasedOnStyle: LLVM
+IndentWidth: 4
+TabWidth: 4
+BreakBeforeBraces: Attach
+SortIncludes: false
+ColumnLimit: 0
+
+NamespaceIndentation: All
+
+AccessModifierOffset: -4
+IndentAccessModifiers: false
+
+BraceWrapping:
+  AfterFunction: false
+  AfterClass: false
+  AfterControlStatement: false
+  SplitEmptyFunction: false

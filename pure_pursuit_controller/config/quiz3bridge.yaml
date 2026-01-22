@@ -1,0 +1,42 @@
+# Name of the domain bridge, used for node naming and logging
+name: quiz3bridge
+from_domain: 100
+to_domain: 1
+topics:
+  HV_19:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_20:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_19:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 2
+
+  HV_20:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 2
+
+  HV_19:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 3
+
+  HV_20:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 3
+
+  HV_19:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 4
+
+  HV_20:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 4

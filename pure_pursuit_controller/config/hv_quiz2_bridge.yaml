@@ -1,0 +1,76 @@
+# Name of the domain bridge, used for node naming and logging
+name: hv_quiz2_bridge
+from_domain: 100
+to_domain: 1
+topics:
+  HV_19:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_20:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_21:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_22:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_23:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_24:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_25:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_26:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_27:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_28:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_29:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_30:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_31:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_32:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_33:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_34:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_35:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  HV_36:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort

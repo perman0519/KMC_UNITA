@@ -1,0 +1,5 @@
+int64 signal
+int64 state
+---
+bool success
+string message

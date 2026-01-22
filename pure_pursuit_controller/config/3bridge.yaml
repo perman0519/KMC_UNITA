@@ -1,0 +1,52 @@
+# Name of the domain bridge, used for node naming and logging
+name: bridge3
+from_domain: 3
+to_domain: 1
+topics:
+  Ego_pose:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV3_pose
+
+  Accel:
+    type: geometry_msgs/msg/Accel
+    reliability: best_effort
+    remap: /CAV3_accel
+
+  CAV3_index:
+    type: std_msgs/msg/Int32
+    reliability: best_effort
+
+  Ego_pose:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV3_pose
+    to_domain: 2
+
+  Accel:
+    type: geometry_msgs/msg/Accel
+    reliability: best_effort
+    remap: /CAV3_accel
+    to_domain: 2
+
+  CAV3_index:
+    type: std_msgs/msg/Int32
+    reliability: best_effort
+    to_domain: 2
+
+  Ego_pose:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV3_pose
+    to_domain: 4
+
+  Accel:
+    type: geometry_msgs/msg/Accel
+    reliability: best_effort
+    remap: /CAV3_accel
+    to_domain: 4
+
+  CAV3_index:
+    type: std_msgs/msg/Int32
+    reliability: best_effort
+    to_domain: 4

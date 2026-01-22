@@ -1,0 +1,132 @@
+{
+    "eventName": "Profile3",
+    "timestamp": "2025.12.16.12.57.24",
+    "vehicles": [
+        {
+            "av": false,
+            "position": {
+                "x": -5.058,
+                "y": 1.333
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 0.662,
+                "y": 2.308
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 3.542,
+                "y": -1.497
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -2.328,
+                "y": -2.302
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -5.299,
+                "y": 1.333
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -2.505,
+                "y": 2.550
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 1.192,
+                "y": 2.550
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 4.872,
+                "y": 2.486
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 5.308,
+                "y": -1.040
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 2.933,
+                "y": -2.550
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -0.748,
+                "y": -2.550
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -4.445,
+                "y": -2.550
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -3.875,
+                "y": 2.792
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 1.422,
+                "y": 2.792
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 5.558,
+                "y": 1.220
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": 3.973,
+                "y": -2.792
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -1.308,
+                "y": -2.792
+            }
+        },
+        {
+            "av": false,
+            "position": {
+                "x": -5.540,
+                "y": -1.323
+            }
+        }
+    ]
+}
