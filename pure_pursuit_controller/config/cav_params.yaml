@@ -14,18 +14,22 @@ problem_two:
 
 problem_three:
   cav1:
-    init_speed: 2.0
-    lookahead: 0.65
+    ros_domain_id: 5
+    init_speed: 0.5
+    lookahead: 0.5
     path: "CAV_01_3.json"
   cav2:
+    ros_domain_id: 6
     init_speed: 2.0
     lookahead: 0.65
     path: "CAV_02_3.json"
   cav3:
+    ros_domain_id: 7
     init_speed: 2.0
     lookahead: 0.65
     path: "CAV_03_3.json"
   cav4:
+    ros_domain_id: 8
     init_speed: 2.0
     lookahead: 0.65
     path: "CAV_04_3.json"
