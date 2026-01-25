@@ -5,7 +5,7 @@ def generate_launch_description():
     # 설정 정보
     package_name = 'pure_pursuit_controller'  # 실제 패키지 이름으로 확인해 주세요
     executable_name = 'quiz3_node'
-    domain_ids = ['1', '2', '3', '4']
+    domain_ids = ['5', '6', '7', '8']
 
     nodes = []
 

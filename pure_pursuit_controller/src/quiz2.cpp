@@ -22,7 +22,8 @@ public:
         if (!init_config() || !init_all_paths()) {
             RCLCPP_ERROR(this->get_logger(), "초기화 실패");
             return;
-        } else {
+        }
+        else {
             RCLCPP_INFO(this->get_logger(), "초기화 성공");
             RCLCPP_INFO(this->get_logger(), "v=%.2f, ld=%.2f", v_, ld_);
             RCLCPP_INFO(this->get_logger(), "모든 경로 로드 완료");
@@ -32,16 +33,21 @@ public:
         }
         auto qos = rclcpp::SensorDataQoS();
 
+        // 1. Ego 위치 구독
         pose_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
             "/Ego_pose", qos, [this](const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
                 this->curr_x_ = msg->pose.position.x;
                 this->curr_y_ = msg->pose.position.y;
-                this->curr_yaw_ = msg->pose.orientation.z; // yaw(rad)
 
+                // ✅ 너가 확인한대로 z가 yaw(rad)인 환경 유지
+                this->curr_yaw_ = msg->pose.orientation.z;
+
+                // ✅ 초기 안정화를 위해 pose 프레임 카운트
                 pose_received_ = true;
                 pose_count_++;
             });
 
+        // 19~22번 (Line 3 HV)
         for (int i = 19; i <= 22; ++i) {
             std::string topic = "/HV_" + std::to_string(i);
             line3_pose_sub_[i] = this->create_subscription<geometry_msgs::msg::PoseStamped>(
@@ -50,6 +56,7 @@ public:
                     this->line3_hvs_y_[i] = msg->pose.position.y;
                 });
         }
+        // 23~30번 (Line 2 HV)
         for (int i = 23; i <= 30; ++i) {
             std::string topic = "/HV_" + std::to_string(i);
             line2_pose_sub_[i] = this->create_subscription<geometry_msgs::msg::PoseStamped>(
@@ -58,6 +65,7 @@ public:
                     this->line2_hvs_y_[i] = msg->pose.position.y;
                 });
         }
+        // 31~36번 (Line 1 HV)
         for (int i = 31; i <= 36; ++i) {
             std::string topic = "/HV_" + std::to_string(i);
             line1_pose_sub_[i] = this->create_subscription<geometry_msgs::msg::PoseStamped>(
@@ -98,11 +106,11 @@ private:
         lanes_path_[3] = load_path_json(pkg_path + "/config/highway_line3.json");
 
         lane_27_30_1_3_6_path_ = load_path_json(pkg_path + "/config/27_30_1_3_6.json");
-        lane_28_31_1_3_5_path_front  = load_path_json(pkg_path + "/config/28_31_1_3_5_front.json");
-        lane_28_31_1_3_5_path_cross  = load_path_json(pkg_path + "/config/28_31_1_3_5_cross.json");
-        lane_28_31_1_3_5_path_back   = load_path_json(pkg_path + "/config/28_31_1_3_5_back.json");
+        lane_28_31_1_3_5_path_front = load_path_json(pkg_path + "/config/28_31_1_3_5_front.json");
+        lane_28_31_1_3_5_path_cross = load_path_json(pkg_path + "/config/28_31_1_3_5_cross.json");
+        lane_28_31_1_3_5_path_back = load_path_json(pkg_path + "/config/28_31_1_3_5_back.json");
         lane_28_31_1_3_5_path_change = load_path_json(pkg_path + "/config/28_31_1_3_5_change.json");
-        lane_28_31_1_3_5_path_lane2  = load_path_json(pkg_path + "/config/28_31_1_3_5_lane2.json");
+        lane_28_31_1_3_5_path_lane2 = load_path_json(pkg_path + "/config/28_31_1_3_5_lane2.json");
 
         return (!lanes_path_[1].X.empty() && !lanes_path_[2].X.empty() && !lanes_path_[3].X.empty());
     }
@@ -118,6 +126,7 @@ private:
         return p;
     }
 
+    // ✅ 현재 위치가 해당 path에서 얼마나 떨어져 있는지 (초기 튐 방지에 사용)
     double min_dist_to_path(const Path& path) {
         if (path.X.empty()) return 1e9;
         double min_dist = 1e9;
@@ -154,14 +163,6 @@ private:
         return (2.0 * local_y) / (ld_ * ld_ + 1e-9);
     }
 
-    // 한 단계 차선 변경만 허용 (1<->2, 2<->3)
-    bool try_set_lane_stepwise(int desired_lane) {
-        if (desired_lane < 1 || desired_lane > 3) return false;
-        if (std::abs(desired_lane - current_lane_) != 1) return false; // 1->3, 3->1 금지
-        current_lane_ = desired_lane;
-        return true;
-    }
-
     bool is_lane_blocked(int lane_num) {
         const auto& path = lanes_path_[lane_num];
         std::vector<std::map<int, double>*> target_x_maps;
@@ -184,7 +185,7 @@ private:
             }
         }
 
-        int search_steps = 105;
+        int search_steps = 110;
         for (int j = closest_idx; j < closest_idx + search_steps; ++j) {
             int idx = j % (int)path.X.size();
             for (size_t m = 0; m < target_x_maps.size(); ++m) {
@@ -244,15 +245,15 @@ private:
         }
         return false;
     }
-
-    void control_loop() {
+void control_loop() {
+        // 1. 초기 상태 체크 (Pose 수신 확인 및 안정화 대기)
         if (!pose_received_) return;
-
         if (pose_count_ < pose_start_threshold_) {
             publish_cmd(0.0, 0.0);
             return;
         }
 
+        // 2. 경로 이탈 방지 (현재 차선과의 거리가 너무 멀면 정지)
         double dist_to_lane = min_dist_to_path(lanes_path_[current_lane_]);
         if (dist_to_lane > path_lock_dist_) {
             publish_cmd(0.0, 0.0);
@@ -261,82 +262,75 @@ private:
 
         double target_v = v_;
 
-        bool on_forbidden_lane3_path    = is_on_path(lane_27_30_1_3_6_path_, 0.1);
-        bool on_force_lane2_path_back   = is_on_path(lane_28_31_1_3_5_path_back, 0.1);
+        // 3. 특수 구간(JSON 경로) 판단
+        bool on_forbidden_lane3_path = is_on_path(lane_27_30_1_3_6_path_, 0.1);
+        bool on_force_lane2_path_back = is_on_path(lane_28_31_1_3_5_path_back, 0.1);
         bool on_force_lane2_path_change = is_on_path(lane_28_31_1_3_5_path_change, 0.1);
 
-        // 28~31 zone (넓게)
+        // 28~31번 합류 금지 구간 여부 (front 경로 활용)
         bool in_28_31_zone = is_on_path(lane_28_31_1_3_5_path_front, 0.5);
 
-        // 강제 2차선 복귀(뒷부분) - 한 단계만
+        // 4. 강제 2차선 복귀 판단 (특정 경로 위인 경우)
         if (on_force_lane2_path_back && current_lane_ != 2) {
-            if (try_set_lane_stepwise(2)) {
-                RCLCPP_INFO(this->get_logger(), "강제 복귀: 2차선으로 한 단계 이동");
-            }
+            RCLCPP_INFO(this->get_logger(), "강제 복귀 경로 진입: 2차선으로 이동");
+            current_lane_ = 2;
         }
 
-        // ===== 장애물 처리 =====
+        // 5. 장애물 감지 및 차선 변경 로직
         if (is_lane_blocked(current_lane_)) {
-
             if (current_lane_ == 2) {
-
+                // [2차선 주행 중 장애물 발생]
                 if (in_28_31_zone) {
-                    // [MOD3] 28~31 구간에서는 "1차선만" 강제 이동 (2->1)
-                    //        -> 어떤 조건(금지 플래그/3차선 여부)과 무관하게 2->1을 최우선으로 강제
-                    if (try_set_lane_stepwise(1)) {  // [MOD3]
-                        RCLCPP_INFO(this->get_logger(),
-                                    "28~31 구간: 2차선 막힘 -> 1차선으로 강제 이동(2->1)"); // [MOD3]
-                    }
-
-                    // [MOD3] 이동했는데 1차선도 막혀있으면 정지
-                    if (is_lane_blocked(1)) { // [MOD3]
-                        RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000,
-                                             "28~31 구간: 1차선도 막힘 -> 정지"); // [MOD3]
-                        target_v = 0.0; // [MOD3]
-                    }
+                    // 28~31 구간(33번 부근)에서는 절대 차선을 바꾸지 않고 정지
+                    RCLCPP_INFO_THROTTLE(this->get_logger(), *this->get_clock(), 1000, "합류 금지 구간: 대기 중");
+                    target_v = 0.0;
                 }
                 else {
-                    // 일반 구간: 기존 로직 유지 (2->3 우선, 안되면 2->1)
+                    // 일반 구간: 1차선 또는 3차선으로 회피 시도
                     if (!on_forbidden_lane3_path && !is_lane_blocked(3)) {
-                        if (try_set_lane_stepwise(3)) {
-                            RCLCPP_INFO(this->get_logger(), "2차선 막혀서 3차선으로 변경(2->3)");
-                        }
+                        RCLCPP_INFO(this->get_logger(), "2 -> 3 차선 변경");
+                        current_lane_ = 3;
                     }
                     else if (!is_lane_blocked(1)) {
-                        if (try_set_lane_stepwise(1)) {
-                            RCLCPP_INFO(this->get_logger(), "2차선 막혀서 1차선으로 변경(2->1)");
-                        }
+                        RCLCPP_INFO(this->get_logger(), "2 -> 1 차선 변경");
+                        current_lane_ = 1;
                     }
                     else {
+                        // 갈 수 있는 차선이 모두 막힘
                         target_v = 0.0;
                     }
                 }
             }
             else {
-                // 1/3차선은 오직 2차선으로만 복귀 (한 단계)
+                // [1차선 또는 3차선 주행 중 장애물 발생]
+                // 1->3 또는 3->1 점프 금지: 오직 2차선 복귀 가능성만 체크
                 if (!is_lane_blocked(2) && !is_lane_behind_blocked(2)) {
-                    if (try_set_lane_stepwise(2)) {
-                        RCLCPP_INFO(this->get_logger(), "현재 차선 막힘 -> 2차선 복귀(한 단계)");
-                    }
+                    RCLCPP_INFO(this->get_logger(), "%d -> 2 차선 복귀", current_lane_);
+                    current_lane_ = 2;
                 } else {
+                    // 2차선이 막혀서 복귀 불가능하면 정지
                     target_v = 0.0;
                 }
             }
         }
 
-        // 합류 지점: 3->2 (한 단계) + 정지
+        // 6. 특수 합류 로직 (합류 지점에서 일시 정지 후 2차선 진입)
         if (on_force_lane2_path_change && current_lane_ == 3) {
-            RCLCPP_INFO(this->get_logger(), "합류 지점: 2차선 변경(3->2) 및 일시 정지");
-            try_set_lane_stepwise(2);
+            RCLCPP_INFO(this->get_logger(), "합류 지점: 2차선 변경 및 일시 정지");
+            current_lane_ = 2;
             target_v = 0.0;
         }
 
+        // 7. 후방 차량 가속 로직 (필요 시)
         if (is_lane_behind_blocked(current_lane_)) {
             target_v = 2.0;
         }
 
+        // 8. 제어값 계산 및 명령 발행
         double curvature = compute_curvature(lanes_path_[current_lane_]);
         double omega = target_v * curvature;
+
+        // 초기 튐 방지 및 과도한 조향 방지 (Clamp)
         omega = std::clamp(omega, -omega_max_, omega_max_);
 
         publish_cmd(target_v, omega);
@@ -345,7 +339,7 @@ private:
     void publish_cmd(double v, double omega) {
         geometry_msgs::msg::Accel msg;
         msg.linear.x = v;
-        msg.angular.z = omega;
+        msg.angular.z = omega;   // 원본 유지
         accel_pub_->publish(msg);
     }
 
@@ -372,12 +366,13 @@ private:
     rclcpp::Publisher<geometry_msgs::msg::Accel>::SharedPtr accel_pub_;
     rclcpp::TimerBase::SharedPtr timer_;
 
+    // ✅ 초기 문제만 잡기 위한 최소 변수
     bool pose_received_ = false;
     int pose_count_ = 0;
-    int pose_start_threshold_ = 5;
+    int pose_start_threshold_ = 5;   // 10프레임(=약 1초 내외) 받고 시작
 
-    double omega_max_ = 3.1;
-    double path_lock_dist_ = 0.8;
+    double omega_max_ = 3.1;          // 네 “잘 되는 코드”와 동일
+    double path_lock_dist_ = 0.8;     // 경로에서 0.8m 이상 멀면 제어 시작 안 함
 };
 
 int main(int argc, char **argv) {

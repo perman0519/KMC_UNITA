@@ -29,6 +29,7 @@ find_package(tf2_ros REQUIRED)
 find_package(nav_msgs REQUIRED)
 find_package(visualization_msgs REQUIRED)
 find_package(std_msgs REQUIRED)
+find_package(Eigen3 REQUIRED)
 
 include_directories(include)
 
@@ -50,10 +51,14 @@ target_link_libraries(quiz2_node
   ${geometry_msgs_LIBRARIES}
 )
 add_executable(quiz3_node src/quiz3.cpp)
+target_include_directories(quiz3_node PRIVATE
+  ${Eigen3_INCLUDE_DIRS}
+)
 target_link_libraries(quiz3_node
   nlohmann_json::nlohmann_json
   ament_index_cpp::ament_index_cpp
   yaml-cpp
+  Eigen3::Eigen
   ${rclcpp_LIBRARIES}
   ${geometry_msgs_LIBRARIES}
   ${std_msgs_LIBRARIES}
