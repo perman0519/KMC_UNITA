@@ -1,5 +1,5 @@
 # Name of the domain bridge
-name: quiz3bridge
+name: hv_bridge
 from_domain: 100
 to_domain: 1 # 기본 목적지 도메인
 

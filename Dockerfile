@@ -57,6 +57,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     ros-foxy-visualization-msgs \
     ros-foxy-ament-index-cpp \
     ros-foxy-std-msgs \
+    ros-foxy-rviz* \
   && rm -rf /var/lib/apt/lists/*
 
 
@@ -88,68 +89,38 @@ COPY Mobility_Challenge_Simulator/src/simulator/package.xml ${ROS_WS}/src/simula
 COPY Mobility_Challenge_Simulator/src/simulator_launch/package.xml ${ROS_WS}/src/simulator_launch/package.xml
 # 기존의 4줄짜리 COPY를 지우고 아래 한 줄로 대체
 COPY Mobility_Challenge_Simulator/profile* ${ROS_WS}/
-# =========================
-# 4) Example packages (pkg_example_*)
-#    TODO (TEAM): pkg_example_*를 참가팀 패키지로 교체
-# =========================
-# COPY pkg_example_1/package.xml ${ROS_WS}/src/pkg_example_1/package.xml
-# COPY pkg_example_2/package.xml ${ROS_WS}/src/pkg_example_2/package.xml
-COPY pure_pursuit_controller/package.xml ${ROS_WS}/src/pure_pursuit_controller/package.xml
-COPY map_visualizer/package.xml ${ROS_WS}/src/map_visualizer/package.xml
 
 # =========================
 # 5) Install dependencies with rosdep
 # =========================
 RUN apt-get update \
-  && rosdep install --from-paths src --ignore-src -r -y --rosdistro ${ROS_DISTRO} --skip-keys python3-aiohttp \
-  && rm -rf /var/lib/apt/lists/*
+&& rosdep install --from-paths src --ignore-src -r -y --rosdistro ${ROS_DISTRO} --skip-keys python3-aiohttp \
+&& rm -rf /var/lib/apt/lists/*
 
 # =========================
 # 6) Copy sources
 # =========================
 # simulator packages
 COPY Mobility_Challenge_Simulator/src/ ${ROS_WS}/src/
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+&& colcon build --merge-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
 
-# # Example packages (pkg_example_*)
-# # TODO (TEAM): pkg_example_*를 참가팀 패키지로 교체
-# COPY pkg_example_1/ ${ROS_WS}/src/pkg_example_1/
-# COPY pkg_example_2/ ${ROS_WS}/src/pkg_example_2/
-
-# TODO (TEAM): Copy your team packages source code
-COPY pure_pursuit_controller/ ${ROS_WS}/src/pure_pursuit_controller/
+COPY map_visualizer/package.xml ${ROS_WS}/src/map_visualizer/package.xml
 COPY map_visualizer/ ${ROS_WS}/src/map_visualizer/
-# COPY src/ ${ROS_WS}/src/   # If you keep your packages under ./src
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+&& source ${ROS_WS}/install/setup.bash \
+&& colcon build --merge-install --cmake-args -DCMAKE_BUILD_TYPE=Release \
+--packages-select map_visualizer
 
+COPY pure_pursuit_controller/package.xml ${ROS_WS}/src/pure_pursuit_controller/package.xml
+COPY pure_pursuit_controller/ ${ROS_WS}/src/pure_pursuit_controller/
+RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
+&& source ${ROS_WS}/install/setup.bash \
+&& colcon build --merge-install --cmake-args -DCMAKE_BUILD_TYPE=Release \
+--packages-select pure_pursuit_controller
 
 COPY entrypoint.sh /entrypoint.sh
 RUN sed -i 's/\r$//' /entrypoint.sh && chmod +x /entrypoint.sh
-
-RUN source /opt/ros/${ROS_DISTRO}/setup.bash \
-  && colcon build --merge-install --cmake-args -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=OFF
-
-# # VNC 및 데스크탑 환경 설치
-# RUN apt-get update && apt-get install -y \
-#     xfce4 xfce4-goodies \
-#     tightvncserver \
-#     novnc python3-websockify \
-#     && rm -rf /var/lib/apt/lists/*
-
-# # VNC 서버 실행 스크립트 설정 (생략 가능, 수동 실행 가능)
-# # =========================
-# # 5-1) GUI/VNC environment
-# # =========================
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#     xvfb \
-#     x11vnc \
-#     novnc \
-#     python3-websockify \
-#     fluxbox \
-#     mesa-utils \
-#     libgl1-mesa-dri \
-#   && rm -rf /var/lib/apt/lists/*
-
-# # noVNC 포트 설정
-# EXPOSE 6080
 
 ENV ROS_LOCALHOST_ONLY=0
 ENTRYPOINT ["/entrypoint.sh"]

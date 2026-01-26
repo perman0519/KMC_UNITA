@@ -53,6 +53,7 @@ target_link_libraries(quiz2_node
 add_executable(quiz3_node src/quiz3.cpp)
 target_include_directories(quiz3_node PRIVATE
   ${Eigen3_INCLUDE_DIRS}
+  include
 )
 target_link_libraries(quiz3_node
   nlohmann_json::nlohmann_json

@@ -60,7 +60,16 @@ def generate_launch_description():
             executable='quiz3_node',
             name=f"quiz3_node_{cav['suffix']}",
             output='screen',
+            # competition.launch.py 수정 (단순하게!)
+            parameters=[{
+                'cav_key': cav['suffix'],
+                'problem_id': LaunchConfiguration('problem_id'),
+                'cav1_id': LaunchConfiguration('cav1_id'),
+                'cav2_id': LaunchConfiguration('cav2_id'),
+                'cav3_id': LaunchConfiguration('cav3_id'),
+                'cav4_id': LaunchConfiguration('cav4_id'),
+            }],
+            # ROS_DOMAIN_ID는 환경 변수이므로 문자열이어도 상관없습니다.
             additional_env={'ROS_DOMAIN_ID': cav['id']},
         ))
-
     return ld

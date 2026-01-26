@@ -41,7 +41,11 @@ run_algorithm() {
       ;;
     "viz")
       echo "실행: map rviz"
-      exec ros2 launch map_visualizer visualize.launch.py
+      exec ros2 launch map_visualizer visualize.launch.py \
+        cav1_id:="${CAV1_ID:-1}" \
+        cav2_id:="${CAV2_ID:-2}" \
+        cav3_id:="${CAV3_ID:-3}" \
+        cav4_id:="${CAV4_ID:-4}" \
       ;;
     *)
       echo "잘못된 PROBLEM_ID: ${PROBLEM_ID} (3, viz 중 하나를 입력하세요)" >&2
