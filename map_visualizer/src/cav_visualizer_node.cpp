@@ -1,177 +1,154 @@
 #include <rclcpp/rclcpp.hpp>
-#include <visualization_msgs/msg/marker.hpp>
+#include <visualization_msgs/msg/marker_array.hpp>
 #include <geometry_msgs/msg/pose_stamped.hpp>
 #include <ament_index_cpp/get_package_share_directory.hpp>
 #include <tf2/LinearMath/Quaternion.h>
 #include <tf2_geometry_msgs/tf2_geometry_msgs.h>
-
 #include <string>
-#include <vector>
-#include <iostream>
-
 #include "map_visualizer/simpleIni.h"
 
-class CavVisualizerNode : public rclcpp::Node
-{
+class CavVisualizerNode : public rclcpp::Node {
 public:
-  CavVisualizerNode()
-  : Node("cav_visualizer_node")
-  {
-    this->declare_parameter("topic_name", "/CAV_01");
-    this->declare_parameter("vehicle_id", 1); // For unique marker ID
+    CavVisualizerNode() : Node("cav_visualizer_node") {
+        // 1. 파라미터 선언 및 즉시 로드
+        this->declare_parameter("topic_name", "/CAV_01");
+        this->declare_parameter("logical_id", 1);
+        this->declare_parameter("display_name", "CAV_1");
 
-    topic_name_ = this->get_parameter("topic_name").as_string();
-    vehicle_id_ = this->get_parameter("vehicle_id").as_int();
+        topic_name_ = this->get_parameter("topic_name").as_string();
+        logical_id_ = this->get_parameter("logical_id").as_int();
+        display_name_ = this->get_parameter("display_name").as_string();
 
-    marker_publisher_ = this->create_publisher<visualization_msgs::msg::Marker>("cav_markers", 10);
+        // 2. 토픽 및 발행자 설정
+        std::string marker_topic = "cav" + std::to_string(logical_id_) + "/marker";
+        marker_pub_ = this->create_publisher<visualization_msgs::msg::MarkerArray>(marker_topic, 10);
 
-    // Subscribe to the PoseStamped topic
-    // CavVisualizerNode 생성자 내부
-  pose_subscription_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
-    topic_name_,
-    rclcpp::SensorDataQoS(), // QoS를 SensorData(Best Effort)로 변경
-    std::bind(&CavVisualizerNode::pose_callback, this, std::placeholders::_1));
-    load_config();
-  }
+        // 3. 설정 로드 및 오프셋 사전 계산
+        load_config();
+        setup_marker_templates();
+
+        // 4. 구독 설정 (람다를 사용하여 바인드 오버헤드 방지)
+        pose_sub_ = this->create_subscription<geometry_msgs::msg::PoseStamped>(
+            topic_name_, rclcpp::SensorDataQoS(),
+            [this](const geometry_msgs::msg::PoseStamped::SharedPtr msg) { pose_callback(msg); });
+
+        RCLCPP_INFO(this->get_logger(), "Optimized Visualizer [Slot %d] for %s initialized.", logical_id_, topic_name_.c_str());
+    }
 
 private:
-  void load_config()
-  {
-    std::string package_share_directory;
-    try {
-      package_share_directory = ament_index_cpp::get_package_share_directory("simulator");
-    } catch (const std::exception &e) {
-      RCLCPP_ERROR(this->get_logger(), "Failed to get simulator package share directory: %s", e.what());
-      // Fallback defaults
-      lengthF_ = 0.17;
-      lengthR_ = 0.16;
-      lengthW_ = 0.075;
-      return;
+    void setup_marker_templates() {
+        // 마커 배열에 공간 2개 생성
+        markers_msg_.markers.clear();
+        markers_msg_.markers.resize(2);
+
+        // 1. 차량 본체 마커 설정 (첫 번째 요소)
+        auto& car = markers_msg_.markers[0];
+        car.header.frame_id = "map";
+        car.ns = "cav_body";
+        car.id = 0;
+        car.type = visualization_msgs::msg::Marker::CUBE;
+        car.action = visualization_msgs::msg::Marker::ADD;
+        car.scale.x = lengthF_ + lengthR_;
+        car.scale.y = lengthW_ * 2.0;
+        car.scale.z = 0.15;
+        car.color.a = 1.0;
+
+        // 색상 로직 (중괄호 포함 확인)
+        if (logical_id_ <= 4) {
+            car.color.r = 0.0; car.color.g = 0.5; car.color.b = 1.0; // Blue
+        } else {
+            car.color.r = 1.0; car.color.g = 0.2; car.color.b = 0.2; // Red
+        }
+
+        // 2. 텍스트 마커 설정 (두 번째 요소)
+        auto& text = markers_msg_.markers[1];
+        text.header.frame_id = "map";
+        text.ns = "cav_label";
+        text.id = 1;
+        text.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
+        text.action = visualization_msgs::msg::Marker::ADD;
+        text.scale.z = 0.4;
+        text.text = display_name_;
+        text.color.r = 1.0; text.color.g = 1.0; text.color.b = 1.0; // White
+        text.color.a = 1.0;
+
+        // 오프셋 사전 계산
+        double center_offset_x = (lengthF_ - lengthR_) / 2.0;
+        precomputed_offset_ = tf2::Vector3(center_offset_x, 0.0, car.scale.z / 2.0);
+    }
+    
+    void pose_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg) {
+        if (!msg) return;
+
+        // 1. 입력받은 RPY(Roll, Pitch, Yaw)를 이용해 tf2 쿼터니언 생성
+        tf2::Quaternion q;
+        // msg->pose.orientation.x = Roll
+        // msg->pose.orientation.y = Pitch
+        // msg->pose.orientation.z = Yaw (Heading)
+        q.setRPY(
+            msg->pose.orientation.x,
+            msg->pose.orientation.y,
+            msg->pose.orientation.z
+        );
+
+        // 2. 사전 계산된 오프셋을 현재 회전에 맞춰 적용
+        tf2::Vector3 pos(msg->pose.position.x, msg->pose.position.y, msg->pose.position.z);
+        tf2::Vector3 rotated_offset = tf2::quatRotate(q, precomputed_offset_);
+        tf2::Vector3 final_pos = pos + rotated_offset;
+
+        // 3. 마커 메시지 업데이트 (RViz용 geometry_msgs::msg::Quaternion으로 변환)
+        auto now = this->now();
+        geometry_msgs::msg::Quaternion q_msg = tf2::toMsg(q);
+
+        // Body Marker 업데이트
+        auto& car = markers_msg_.markers[0];
+        car.header.stamp = now;
+        car.pose.position.x = final_pos.x();
+        car.pose.position.y = final_pos.y();
+        car.pose.position.z = final_pos.z();
+        car.pose.orientation = q_msg; // 변환된 쿼터니언 주입
+
+        // Text Marker 업데이트
+        auto& text = markers_msg_.markers[1];
+        text.header.stamp = now;
+        text.pose.position.x = final_pos.x();
+        text.pose.position.y = final_pos.y();
+        text.pose.position.z = final_pos.z() + 0.5;
+        // 텍스트는 orientation을 따로 업데이트하지 않아도 TEXT_VIEW_FACING이라 카메라를 봅니다.
+
+        // 4. 발행
+        marker_pub_->publish(markers_msg_);
     }
 
-    std::string config_path = package_share_directory + "/resource/config.ini";
-    RCLCPP_INFO(this->get_logger(), "Loading vehicle config from: %s", config_path.c_str());
-
-    CSimpleIniA ini;
-    ini.SetUnicode();
-    SI_Error rc = ini.LoadFile(config_path.c_str());
-    if (rc < 0) {
-        RCLCPP_ERROR(this->get_logger(), "Failed to load config.ini");
-        return;
+    void load_config() {
+        try {
+            std::string pkg_share = ament_index_cpp::get_package_share_directory("simulator");
+            CSimpleIniA ini;
+            if (ini.LoadFile((pkg_share + "/resource/config.ini").c_str()) >= 0) {
+                lengthF_ = ini.GetDoubleValue("vehicle", "lengthF", 0.17);
+                lengthR_ = ini.GetDoubleValue("vehicle", "lengthR", 0.16);
+                lengthW_ = ini.GetDoubleValue("vehicle", "lengthW", 0.075);
+                return;
+            }
+        } catch (...) {}
+        lengthF_ = 0.17; lengthR_ = 0.16; lengthW_ = 0.075;
     }
 
-    // Default values if not found
-    lengthF_ = ini.GetDoubleValue("vehicle", "lengthF", 0.17);
-    lengthR_ = ini.GetDoubleValue("vehicle", "lengthR", 0.16);
-    lengthW_ = ini.GetDoubleValue("vehicle", "lengthW", 0.075);
+    // 멤버 변수
+    rclcpp::Publisher<visualization_msgs::msg::MarkerArray>::SharedPtr marker_pub_;
+    rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_sub_;
 
-    RCLCPP_INFO(this->get_logger(), "Vehicle dimensions: LF=%.3f, LR=%.3f, LW=%.3f", lengthF_, lengthR_, lengthW_);
-  }
+    visualization_msgs::msg::MarkerArray markers_msg_; // 멤버 변수로 유지하여 재사용
+    tf2::Vector3 precomputed_offset_; // 사전 계산된 오프셋 변수
 
-  void pose_callback(const geometry_msgs::msg::PoseStamped::SharedPtr msg)
-  {
-    visualization_msgs::msg::Marker marker;
-    marker.header.frame_id = "map"; // Assuming map frame, or use msg->header.frame_id if appropriate
-    marker.header.stamp = this->now();
-    marker.ns = "cavs";
-    marker.id = vehicle_id_;
-    marker.type = visualization_msgs::msg::Marker::CUBE;
-    marker.action = visualization_msgs::msg::Marker::ADD;
-
-    // Dimensions
-    // Length = LF + LR
-    // Width = 2 * LW
-    // Height = Arbitrary (e.g., 0.15 to look like a small car/box)
-    marker.scale.x = lengthF_ + lengthR_;
-    marker.scale.y = lengthW_ * 2.0;
-    marker.scale.z = 0.15; // Approximate height
-
-    // Color (Blue-ish for CAVs)
-    marker.color.r = 0.0;
-    marker.color.g = 0.5;
-    marker.color.b = 1.0;
-    marker.color.a = 1.0;
-
-    // Position
-    // The received pose is the center of the rear axle? Or center of gravity?
-    // In vehicle.cpp: points are relative to (0,0). Front is +LF, Rear is -LR.
-    // So the origin is between the axles?
-    // If the tracked pose corresponds to this origin (0,0), then we need to offset the Cube
-    // because the Cube's origin is its geometric center.
-    // Geometric center X relative to pose origin: (LF - LR) / 2
-    // Geometric center Y relative to pose origin: 0
-    // Geometric center Z relative to pose origin: height / 2 (assuming pose is on ground)
-
-    double center_offset_x = (lengthF_ - lengthR_) / 2.0;
-
-    // Extract Euler angles from the weird orientation field
-    // User said: x=Roll, y=Pitch, z=Yaw
-    double roll = msg->pose.orientation.x;
-    double pitch = msg->pose.orientation.y;
-    double yaw = msg->pose.orientation.z;
-
-    // Create Quaternion from RPY
-    tf2::Quaternion q;
-    q.setRPY(roll, pitch, yaw);
-
-    // Apply rotation to the offset
-    // We need to transform the local center offset (center_offset_x, 0, 0) by the orientation
-    // to get the global offset.
-    // Actually, it's easier to set the marker pose to the vehicle pose,
-    // and if Marker supported pivot points, we'd use that.
-    // Since Marker is centered, we must compute the center position in global frame.
-
-    // Global Position = Pose Position + Rotation * Local Offset
-    // Local Offset = (center_offset_x, 0, marker.scale.z / 2.0)
-
-    tf2::Vector3 pos(msg->pose.position.x, msg->pose.position.y, msg->pose.position.z);
-    tf2::Vector3 local_offset(center_offset_x, 0.0, marker.scale.z / 2.0);
-    tf2::Vector3 rotated_offset = tf2::quatRotate(q, local_offset);
-    tf2::Vector3 final_pos = pos + rotated_offset;
-
-    marker.pose.position.x = final_pos.x();
-    marker.pose.position.y = final_pos.y();
-    marker.pose.position.z = final_pos.z();
-
-    marker.pose.orientation = tf2::toMsg(q);
-
-    marker_publisher_->publish(marker);
-
-    // Also publish a Text marker for ID
-    visualization_msgs::msg::Marker text_marker;
-    text_marker.header = marker.header;
-    text_marker.ns = "cav_ids";
-    text_marker.id = vehicle_id_;
-    text_marker.type = visualization_msgs::msg::Marker::TEXT_VIEW_FACING;
-    text_marker.action = visualization_msgs::msg::Marker::ADD;
-    text_marker.scale.z = 0.3; // Text height
-    text_marker.color.r = 1.0;
-    text_marker.color.g = 1.0;
-    text_marker.color.b = 1.0;
-    text_marker.color.a = 1.0;
-    text_marker.pose.position.x = final_pos.x();
-    text_marker.pose.position.y = final_pos.y();
-    text_marker.pose.position.z = final_pos.z() + 0.3;
-    text_marker.text = "CAV_" + std::to_string(vehicle_id_);
-
-    marker_publisher_->publish(text_marker);
-  }
-
-  rclcpp::Publisher<visualization_msgs::msg::Marker>::SharedPtr marker_publisher_;
-  rclcpp::Subscription<geometry_msgs::msg::PoseStamped>::SharedPtr pose_subscription_;
-
-  std::string topic_name_;
-  int vehicle_id_;
-
-  double lengthF_;
-  double lengthR_;
-  double lengthW_;
+    std::string topic_name_, display_name_;
+    int logical_id_;
+    double lengthF_, lengthR_, lengthW_;
 };
 
-int main(int argc, char * argv[])
-{
-  rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<CavVisualizerNode>());
-  rclcpp::shutdown();
-  return 0;
+int main(int argc, char * argv[]) {
+    rclcpp::init(argc, argv);
+    rclcpp::spin(std::make_shared<CavVisualizerNode>());
+    rclcpp::shutdown();
+    return 0;
 }

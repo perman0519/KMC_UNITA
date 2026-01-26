@@ -19,7 +19,7 @@ public:
   : Node("map_visualizer_node")
   {
     publisher_ = this->create_publisher<visualization_msgs::msg::MarkerArray>("map_markers", 10);
-    
+
     // Timer to publish map periodically (e.g., every 2 seconds, as it is static)
     timer_ = this->create_wall_timer(
       std::chrono::seconds(2),
@@ -80,12 +80,12 @@ private:
     marker.id = id_counter++;
     marker.type = visualization_msgs::msg::Marker::LINE_STRIP;
     marker.action = visualization_msgs::msg::Marker::ADD;
-    
+
     marker.scale.x = 0.2; // Line width
 
-    marker.color.r = 1.0;
-    marker.color.g = 1.0;
-    marker.color.b = 1.0;
+    marker.color.r = 0.5;
+    marker.color.g = 0.5;
+    marker.color.b = 0.5;
     marker.color.a = 1.0;
 
     marker.pose.orientation.w = 1.0;

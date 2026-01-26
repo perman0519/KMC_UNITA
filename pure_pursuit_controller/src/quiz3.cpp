@@ -171,7 +171,7 @@ private:
             path8_11 = load_path_json(pkg_path + "/config/8_11_fixed.json");
             path9_56 = load_path_json(pkg_path + "/config/9_56.json");
             path21_51 = load_path_json(pkg_path + "/config/21_51.json");
-            path22_25 = load_path_json(pkg_path + "/config/22_25_fixed.json");
+            path22_25 = load_path_json(pkg_path + "/config/22_25.json");
             path48_58 = load_path_json(pkg_path + "/config/48_58_fixed.json");
             path49_55 = load_path_json(pkg_path + "/config/49_55_fixed.json");
             path51_46 = load_path_json(pkg_path + "/config/21_51_46.json");
