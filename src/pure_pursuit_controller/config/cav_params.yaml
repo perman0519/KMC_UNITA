@@ -1,0 +1,32 @@
+problem_one:
+  cav1:
+    init_speed: 2.0
+    lookahead: 0.7
+    path: "CAV_01_1.json"
+  cav2:
+    init_speed: 2.0
+    lookahead: 0.7
+    path: "CAV_02_1.json"
+problem_two:
+  cav1:
+    init_speed: 1.6
+    lookahead: 0.65
+
+problem_three:
+  cav1:
+    init_speed: 1.5
+    lookahead: 1.0
+    path: "CAV_01_3_fixed_fixed_fixed_fixed_fixed_fixed_fixed.json"
+  cav2:
+    init_speed: 1.5
+    lookahead: 1.0
+    path: "CAV_02_3_fixed_fixed_fixed_fixed_fixed.json"
+  cav3:
+    init_speed: 1.5
+    lookahead: 1.0
+    path: "CAV_03_3_fixed_fixed_fixed_fixed.json"
+  cav4:
+    init_speed: 1.5
+    lookahead: 1.0
+    path: "CAV_04_3_fixed_fixed_fixed_fixed_fixed_fixed"
+    

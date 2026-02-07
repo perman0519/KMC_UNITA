@@ -1,0 +1,135 @@
+name: cav8_bridge
+from_domain: 8
+to_domain: 1
+topics:
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 1
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 1
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 2
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 2
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 3
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 3
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 4
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 4
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 5
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 5
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 6
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 6
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 7
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 7
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 9
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 9
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 10
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 10
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 11
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 11
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 12
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 12
+
+  - topic: Ego_pose
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV8_pose
+    to_domain: 31
+  - topic: cmd_vel
+    type: geometry_msgs/msg/Twist
+    reliability: best_effort
+    remap: /CAV8_cmd_vel
+    to_domain: 31

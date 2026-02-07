@@ -1,0 +1,41 @@
+# Name of the domain bridge
+name: quiz3bridge
+from_domain: 100
+to_domain: 1 # 기본 목적지 도메인
+
+topics:
+  # 기본 도메인 (1) 전송
+  HV_19:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+  HV_20:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+
+  # 추가 도메인 (2 ~ 4) 명시적 전송
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 2 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 2 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 3 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 3 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 4 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 4 }
+
+  # 요청하신 범위 (5 ~ 31) 전송 설정
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 5 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 5 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 6 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 6 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 7 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 7 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 8 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 8 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 9 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 9 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 10 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 10 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 11 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 11 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 12 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 12 }
+  HV_19: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 31 }
+  HV_20: { type: geometry_msgs/msg/PoseStamped, reliability: best_effort, to_domain: 31 }

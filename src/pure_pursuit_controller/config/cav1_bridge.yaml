@@ -1,0 +1,21 @@
+name: cav1_bridge
+from_domain: 1
+to_domain: 2
+topics:
+  Ego_pose:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV1_pose
+    to_domain: 2
+
+  Ego_pose:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV1_pose
+    to_domain: 3
+
+  Ego_pose:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    remap: /CAV1_pose
+    to_domain: 4

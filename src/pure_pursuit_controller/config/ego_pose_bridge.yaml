@@ -1,0 +1,83 @@
+name: egopose_bridge
+from_domain: 100
+to_domain: 1 # 기본 목적지 도메인
+
+topics:
+
+  CAV_01:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 1
+    remap_from: "/Ego_pose"
+
+  CAV_02:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 2
+    remap_from: "/Ego_pose"
+
+  CAV_03:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 3
+    remap_from: "/Ego_pose"
+
+  CAV_04:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 4
+    remap_from: "/Ego_pose"
+
+  CAV_05:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 5
+    remap_from: "/Ego_pose"
+
+  CAV_06:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 6
+    remap_from: "/Ego_pose"
+
+  CAV_07:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 7
+    remap_from: "/Ego_pose"
+
+  CAV_08:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 8
+    remap_from: "/Ego_pose"
+
+  CAV_09:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 9
+    remap_from: "/Ego_pose"
+
+  CAV_10:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 10
+    remap_from: "/Ego_pose"
+
+  CAV_11:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 11
+    remap_from: "/Ego_pose"
+
+  CAV_12:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 12
+    remap_from: "/Ego_pose"
+
+  CAV_31:
+    type: geometry_msgs/msg/PoseStamped
+    reliability: best_effort
+    to_domain: 31
+    remap_from: "/Ego_pose"
