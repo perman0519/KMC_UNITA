@@ -16,16 +16,16 @@ problem_three:
   cav1:
     init_speed: 1.5
     lookahead: 1.0
-    path: "CAV_01_3_fixed_fixed_fixed_fixed_fixed_fixed_fixed.json"
+    path: "CAV_01_3_final.json"
   cav2:
     init_speed: 1.5
     lookahead: 1.0
-    path: "CAV_02_3_fixed_fixed_fixed_fixed_fixed.json"
+    path: "CAV_02_3_final.json"
   cav3:
     init_speed: 1.5
     lookahead: 1.0
-    path: "CAV_03_3_0208_fixed_fixed.json"
+    path: "CAV_03_3_final.json"
   cav4:
     init_speed: 1.5
     lookahead: 1.0
-    path: "cav_04_3_0208_fixed_fixed.json"
+    path: "cav_04_3_final.json"
