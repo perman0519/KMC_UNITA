@@ -16,7 +16,7 @@ problem_three:
   cav1:
     init_speed: 1.5
     lookahead: 1.0
-    path: "CAV_01_3_0208.json"
+    path: "CAV_03_4.json"
   cav2:
     init_speed: 1.5
     lookahead: 1.0

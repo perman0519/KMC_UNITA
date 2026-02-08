@@ -66,11 +66,40 @@ private:
         double dist_to_collision_other = 1e9;
     };
 
+
+
+    inline double computeTargetSpeed(double curvature)
+    {
+        double kappa = std::abs(curvature);
+
+        double v_max = 1.7; // 직선
+        double v_min = 0.8;    // 급커브
+        double kappa_max = 3.0; //
+
+
+        double ratio = kappa / kappa_max;
+        // if (ratio > 1.0)
+        //     ratio = 1.0;
+
+        // quadratic 감속
+        ratio = ratio * ratio;
+
+
+        RCLCPP_INFO(this->get_logger(),"kappa : %.3f,ratio : %.3f",kappa,ratio);
+
+
+        return v_max - (v_max - v_min) * ratio;
+    }
+
+
+
     // --- 핵심 제어 로직 ---
     void control_loop() {
         // 충돌 위험 판단
         CollisionInfo col = check_collision_detail();
-        double target_v = std::min(v_, max_v_);
+        // double target_v = std::min(v_, max_v_);
+
+        double target_v=0.0;
 
         if (col.collision_predicted) {
             // 양보 로직: 내가 더 멀리 있거나 ID가 높을 때(거리가 비슷하면) 정지
@@ -83,6 +112,13 @@ private:
 
         // Pure Pursuit 조향 계산
         double curvature = compute_curvature();
+
+        // 곡률 기반 속도
+        target_v = computeTargetSpeed(curvature);
+        target_v = std::min(target_v, max_v_);
+
+        target_v = std::clamp(target_v,0.8,1.7);
+
         double omega = target_v * curvature;
         double clamped_omega = std::clamp(omega, -M_PI, M_PI);
 
