@@ -64,7 +64,7 @@ public:
 
     init_other_subs(qos);
     timer_ = this->create_wall_timer(
-        25ms, std::bind(&PurePursuitNode::control_loop, this));
+        50ms, std::bind(&PurePursuitNode::control_loop, this));
 
     RCLCPP_INFO(this->get_logger(),
                 "Pure Pursuit Node Initialized for Domain ID: %zu", domain_id_);
