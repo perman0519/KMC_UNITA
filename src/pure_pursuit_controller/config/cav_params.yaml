@@ -14,18 +14,18 @@ problem_two:
 
 problem_three:
   cav1:
-    init_speed: 1.5
+    init_speed: 1.0
     lookahead: 1.0
-    path: "CAV_01_3_fixed_fixed_fixed_fixed_fixed_fixed.json"
+    path: "CAV_01_3.json"
   cav2:
-    init_speed: 1.5
+    init_speed: 1.0
     lookahead: 1.0
-    path: "CAV_02_3_fixed_fixed_fixed_fixed_fixed.json"
+    path: "CAV_02_3.json"
   cav3:
-    init_speed: 1.5
+    init_speed: 1.0
     lookahead: 1.0
-    path: "CAV_03_3_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed.json"
+    path: "CAV_03_3.json"
   cav4:
-    init_speed: 1.5
+    init_speed: 1.0
     lookahead: 1.0
-    path: "CAV_04_3_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed.json"
+    path: "CAV_04_3.json"

@@ -171,7 +171,7 @@ private:
       brake_active_ = false;
 
     // === P 제어 ===
-    const double Kp = 1.1;
+    const double Kp = 1.05;
 
     // 속도 제어 - vehicle_speed 직접 사용
     double current_v = encoder_received_ ? encoder_v_ : 0.0;
