@@ -106,8 +106,14 @@ private:
       }
 
       double elapsed = (this->now() - wait_starttime_).seconds();
-
-      if (elapsed < 3.0) {
+      double wait_duration = 3.0; // 3초 대기
+      if (domain_id_ == 1 || domain_id_ == 2) {
+        wait_duration = 3.0; // CAV1은 대기 없음
+      }
+      else {
+        wait_duration = 8.0; // CAV2, CAV3, CAV4는 3초 대기
+      }
+      if (elapsed < wait_duration) {
         geometry_msgs::msg::Accel stop_msg;
         stop_msg.linear.x = 0.0;
         stop_msg.angular.z = 0.0;
