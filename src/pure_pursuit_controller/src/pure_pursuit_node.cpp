@@ -120,7 +120,9 @@ private:
         target_v = std::clamp(target_v,0.8,1.7);
 
         double omega = target_v * curvature;
-        double clamped_omega = std::clamp(omega, -M_PI, M_PI);
+        double max = 3.0;
+        double mav_yaw = target_v * max;
+        double clamped_omega = std::clamp(omega, -mav_yaw, mav_yaw);
 
         // 메시지 생성 및 동시 발행
         geometry_msgs::msg::Twist twist_msg;
