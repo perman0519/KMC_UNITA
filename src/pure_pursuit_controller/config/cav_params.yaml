@@ -22,7 +22,7 @@ problem_three:
     lookahead: 1.0
     path: "CAV_02_3_fixed_fixed_fixed_fixed_fixed.json"
   cav3:
-    init_speed: 1.0
+    init_speed: 1.5
     lookahead: 1.0
     path: "CAV_03_3_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed_fixed.json"
   cav4:
