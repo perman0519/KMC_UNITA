@@ -28,4 +28,4 @@ problem_three:
   cav4:
     init_speed: 1.5
     lookahead: 1.0
-    path: "cav_04_3_0208_fixed.json"
+    path: "cav_04_3_0208_fixed_fixed.json"
