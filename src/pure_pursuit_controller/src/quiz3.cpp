@@ -274,6 +274,10 @@ private:
           load_path_json(pkg_path + "/config/cav1_circle_enter.json");
       cav4_circle_enter =
           load_path_json(pkg_path + "/config/cav4_circle_enter.json");
+      cav2_circle_enter =
+          load_path_json(pkg_path + "/config/cav2_circle_enter.json");
+      cav3_circle_enter =
+          load_path_json(pkg_path + "/config/cav3_circle_enter.json");
       others_paths_[19] =
           load_path_json(pkg_path + "/config/roundabout_lane_two.json");
       others_paths_[20] =
@@ -330,7 +334,8 @@ private:
       my_active_rules_.push_back({&path9_56, {{4, &path8_11}}});
       my_active_rules_.push_back(
           {&path56_59, {{2, &path49_55}, {2, &path60_52}, {4, &path61_47}}});
-      my_active_rules_.push_back({&cav1_circle_enter, {{4, &circle_enter}}});
+      my_active_rules_.push_back(
+          {&cav1_circle_enter, {{4, &cav4_circle_enter}}});
     } else if (tid == 2) {
       my_active_rules_.push_back(
           {&path60_52, {{1, &path56_59}, {1, &path51_46}, {3, &path48_58}}});
@@ -338,19 +343,22 @@ private:
       my_active_rules_.push_back(
           {&path49_55, {{1, &path51_46}, {1, &path56_59}, {4, &path61_47}}});
       my_active_rules_.push_back({&path55_12, {{4, &path8_11}}});
-      my_active_rules_.push_back({&path24_37, {{3, &circle_enter}}});
+      my_active_rules_.push_back(
+          {&cav2_circle_enter, {{3, &cav3_circle_enter}}});
     } else if (tid == 3) {
       my_active_rules_.push_back(
           {&path22_25, {{1, &path21_51}, {2, &path52_24}}});
       my_active_rules_.push_back(
           {&path48_58, {{1, &path51_46}, {2, &path60_52}}});
-      my_active_rules_.push_back({&path25_36, {{2, &circle_enter}}});
+      my_active_rules_.push_back(
+          {&cav3_circle_enter, {{2, &cav2_circle_enter}}});
     } else if (tid == 4) {
       my_active_rules_.push_back(
           {&path61_47, {{1, &path56_59}, {2, &path49_55}}});
       my_active_rules_.push_back(
           {&path8_11, {{1, &path9_56}, {2, &path55_12}}});
-      my_active_rules_.push_back({&cav4_circle_enter, {{1, &circle_enter}}});
+      my_active_rules_.push_back(
+          {&cav4_circle_enter, {{1, &cav1_circle_enter}}});
     }
   }
 
@@ -379,7 +387,8 @@ private:
   Path my_path_, circle_path_, path8_11, path9_56, path21_51, path22_25,
       path48_58, path49_55, path51_46, path52_24, path55_12, path56_59,
       path60_52, path61_47, path60_52_exit, path24_37, path25_36, circle_enter,
-      cav1_circle_enter, cav4_circle_enter;
+      cav1_circle_enter, cav4_circle_enter, cav2_circle_enter,
+      cav3_circle_enter;
 
   std::map<int, Point> others_pos_;
   std::map<int, bool> others_received_;
