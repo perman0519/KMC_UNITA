@@ -39,7 +39,7 @@ public:
                                                others_pos.at(id).y);
 
       double my_accum = 0.0;
-      for (int i = my_idx; i < my_path_size - 1 && my_accum < 1.5; ++i) {
+      for (int i = my_idx; i < my_path_size - 1 && my_accum < 0.9; ++i) {
         double dx_my = my_path.X[i + 1] - my_path.X[i];
         double dy_my = my_path.Y[i + 1] - my_path.Y[i];
         my_accum += std::sqrt(dx_my * dx_my + dy_my * dy_my);
