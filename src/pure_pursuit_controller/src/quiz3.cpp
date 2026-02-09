@@ -147,6 +147,11 @@ private:
                                         others_received_, logical_id)) {
             target_v =
                 (conflict.other_id < logical_id) ? 0.0 : 0.5; // 0.5 에서 테스트
+
+            RCLCPP_INFO(
+                this->get_logger(),
+                "차량 %d가 차량 %d와 충돌가능성이 있어 속도를 줄입니다.",
+                logical_id, conflict.other_id);
             if (logical_id == 2 &&
                 checker_->is_on_path(path60_52_exit, curr_x_, curr_y_))
               target_v = v_; // cav_param 에서 받은 v
