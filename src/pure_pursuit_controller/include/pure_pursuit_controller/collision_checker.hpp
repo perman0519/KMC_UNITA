@@ -84,7 +84,7 @@ public:
     int other_path_size = static_cast<int>(other_path.X.size());
 
     double my_accum = 0.0;
-    double dist_th = 0.35;
+    double dist_th = 0.25;
     double dist_sq_threshold = dist_th * dist_th; // 의미:
 
     for (int i = my_idx; i < my_path_size - 1 && my_accum < 1.3; ++i) {
