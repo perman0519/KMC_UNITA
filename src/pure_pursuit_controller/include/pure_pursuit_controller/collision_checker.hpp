@@ -26,7 +26,7 @@ public:
                           const std::map<int, Path> &others_paths,
                           const std::map<int, bool> &others_received) {
     int my_path_size = static_cast<int>(my_path.X.size());
-    double dist_th = 0.9;
+    double dist_th = 0.65;
     double dist_sq_threshold = dist_th * dist_th;
 
     for (int id : {19, 20}) {
