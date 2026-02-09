@@ -163,13 +163,13 @@ private:
         checker_->is_on_path(cav1_circle_enter, curr_x_, curr_y_) &&
         checker_->is_on_path(cav4_circle_enter, others_pos_[4].x,
                              others_pos_[4].y)) {
-      target_v = 0.5;
+      target_v = 1.5;
     }
     if (logical_id == 2 &&
         checker_->is_on_path(cav2_circle_enter, curr_x_, curr_y_) &&
         checker_->is_on_path(cav3_circle_enter, others_pos_[3].x,
                              others_pos_[3].y)) {
-      target_v = 0.5;
+      target_v = 1.5;
     }
     if (logical_id == 3 &&
         checker_->is_on_path(cav3_circle_enter, curr_x_, curr_y_) &&
@@ -296,11 +296,11 @@ private:
       path25_36 = load_path_json(pkg_path + "/config/path_25_36.json");
       circle_enter = load_path_json(pkg_path + "/config/circle_enter.json");
       cav1_circle_enter =
-          load_path_json(pkg_path + "/config/cav1_circle_enter.json");
+          load_path_json(pkg_path + "/config/cav1_circle_enter_fixed.json");
       cav4_circle_enter =
           load_path_json(pkg_path + "/config/cav4_circle_enter.json");
       cav2_circle_enter =
-          load_path_json(pkg_path + "/config/cav2_circle_enter.json");
+          load_path_json(pkg_path + "/config/cav2_circle_enter_fixed.json");
       cav3_circle_enter =
           load_path_json(pkg_path + "/config/cav3_circle_enter.json");
       others_paths_[19] =
