@@ -147,11 +147,6 @@ private:
                                         others_received_, logical_id)) {
             target_v =
                 (conflict.other_id < logical_id) ? 0.0 : 0.5; // 0.5 에서 테스트
-
-            RCLCPP_INFO(
-                this->get_logger(),
-                "차량 %d가 차량 %d와 충돌가능성이 있어 속도를 줄입니다.",
-                logical_id, conflict.other_id);
             if (logical_id == 2 &&
                 checker_->is_on_path(path60_52_exit, curr_x_, curr_y_))
               target_v = v_; // cav_param 에서 받은 v
@@ -162,6 +157,31 @@ private:
 
       if (target_v == 0.0)
         break;
+    }
+
+    if (logical_id == 1 &&
+        checker_->is_on_path(cav1_circle_enter, curr_x_, curr_y_) &&
+        checker_->is_on_path(cav4_circle_enter, others_pos_[4].x,
+                             others_pos_[4].y)) {
+      target_v = 0.5;
+    }
+    if (logical_id == 2 &&
+        checker_->is_on_path(cav2_circle_enter, curr_x_, curr_y_) &&
+        checker_->is_on_path(cav3_circle_enter, others_pos_[3].x,
+                             others_pos_[3].y)) {
+      target_v = 0.5;
+    }
+    if (logical_id == 3 &&
+        checker_->is_on_path(cav3_circle_enter, curr_x_, curr_y_) &&
+        checker_->is_on_path(cav2_circle_enter, others_pos_[2].x,
+                             others_pos_[2].y)) {
+      target_v = 0.0;
+    }
+    if (logical_id == 4 &&
+        checker_->is_on_path(cav4_circle_enter, curr_x_, curr_y_) &&
+        checker_->is_on_path(cav1_circle_enter, others_pos_[1].x,
+                             others_pos_[1].y)) {
+      target_v = 0.0;
     }
 
     // 2. HV 충돌 체크
@@ -339,8 +359,8 @@ private:
       my_active_rules_.push_back({&path9_56, {{4, &path8_11}}});
       my_active_rules_.push_back(
           {&path56_59, {{2, &path49_55}, {2, &path60_52}, {4, &path61_47}}});
-      my_active_rules_.push_back(
-          {&cav1_circle_enter, {{4, &cav4_circle_enter}}});
+      // my_active_rules_.push_back(
+      //     {&cav1_circle_enter, {{4, &cav4_circle_enter}}});
     } else if (tid == 2) {
       my_active_rules_.push_back(
           {&path60_52, {{1, &path56_59}, {1, &path51_46}, {3, &path48_58}}});
@@ -348,22 +368,22 @@ private:
       my_active_rules_.push_back(
           {&path49_55, {{1, &path51_46}, {1, &path56_59}, {4, &path61_47}}});
       my_active_rules_.push_back({&path55_12, {{4, &path8_11}}});
-      my_active_rules_.push_back(
-          {&cav2_circle_enter, {{3, &cav3_circle_enter}}});
+      // my_active_rules_.push_back(
+      //     {&cav2_circle_enter, {{3, &cav3_circle_enter}}});
     } else if (tid == 3) {
       my_active_rules_.push_back(
           {&path22_25, {{1, &path21_51}, {2, &path52_24}}});
       my_active_rules_.push_back(
           {&path48_58, {{1, &path51_46}, {2, &path60_52}}});
-      my_active_rules_.push_back(
-          {&cav3_circle_enter, {{2, &cav2_circle_enter}}});
+      // my_active_rules_.push_back(
+      // {&cav3_circle_enter, {{2, &cav2_circle_enter}}});
     } else if (tid == 4) {
       my_active_rules_.push_back(
           {&path61_47, {{1, &path56_59}, {2, &path49_55}}});
       my_active_rules_.push_back(
           {&path8_11, {{1, &path9_56}, {2, &path55_12}}});
-      my_active_rules_.push_back(
-          {&cav4_circle_enter, {{1, &cav1_circle_enter}}});
+      // my_active_rules_.push_back(
+      // {&cav4_circle_enter, {{1, &cav1_circle_enter}}});
     }
   }
 

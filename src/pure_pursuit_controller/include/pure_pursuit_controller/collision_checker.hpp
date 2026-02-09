@@ -16,7 +16,7 @@ struct SegmentRule {
 class CollisionChecker {
 public:
   bool is_on_path(const Path &path, double x, double y,
-                  double threshold = 0.4) {
+                  double threshold = 0.2) {
     int idx = find_closest_index_internal(path, x, y);
     return std::hypot(path.X[idx] - x, path.Y[idx] - y) < threshold;
   }
