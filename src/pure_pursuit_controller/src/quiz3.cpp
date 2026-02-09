@@ -109,8 +109,7 @@ private:
       double wait_duration = 0.0;
       if (domain_id_ == 1 || domain_id_ == 2) {
         wait_duration = 3.0; // CAV1은 대기 없음
-      }
-      else {
+      } else {
         wait_duration = 8.0; // CAV2, CAV3, CAV4는 3초 대기
       }
       if (elapsed < wait_duration) {
