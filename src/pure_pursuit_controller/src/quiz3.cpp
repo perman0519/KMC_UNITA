@@ -159,30 +159,44 @@ private:
         break;
     }
 
-    if (logical_id == 1 &&
-        checker_->is_on_path(cav1_circle_enter, curr_x_, curr_y_) &&
-        checker_->is_on_path(cav4_circle_enter, others_pos_[4].x,
-                             others_pos_[4].y)) {
-      target_v = 1.5;
-    }
-    if (logical_id == 2 &&
-        checker_->is_on_path(cav2_circle_enter, curr_x_, curr_y_) &&
-        checker_->is_on_path(cav3_circle_enter, others_pos_[3].x,
-                             others_pos_[3].y)) {
-      target_v = 1.5;
-    }
-    if (logical_id == 3 &&
-        checker_->is_on_path(cav3_circle_enter, curr_x_, curr_y_) &&
-        checker_->is_on_path(cav2_circle_enter, others_pos_[2].x,
-                             others_pos_[2].y)) {
+    if (logical_id == 4 && checker_->is_on_path(cav4_stop, curr_x_, curr_y_)) {
       target_v = 0.0;
-    }
-    if (logical_id == 4 &&
-        checker_->is_on_path(cav4_circle_enter, curr_x_, curr_y_) &&
-        checker_->is_on_path(cav1_circle_enter, others_pos_[1].x,
-                             others_pos_[1].y)) {
+      if (checker_->is_on_path(cav1_circle_exit, others_pos_[0].x,
+                               others_pos_[0].y)) {
+        target_v = v_;
+      }
+    } else if (logical_id == 3 &&
+               checker_->is_on_path(cav3_stop, curr_x_, curr_y_)) {
       target_v = 0.0;
+      if (checker_->is_on_path(cav2_circle_exit, others_pos_[1].x,
+                               others_pos_[1].y)) {
+        target_v = v_;
+      }
     }
+    // if (logical_id == 1 &&
+    //     checker_->is_on_path(cav1_circle_enter, curr_x_, curr_y_) &&
+    //     checker_->is_on_path(cav4_circle_enter, others_pos_[4].x,
+    //                          others_pos_[4].y)) {
+    //   target_v = 1.5;
+    // }
+    // if (logical_id == 2 &&
+    //     checker_->is_on_path(cav2_circle_enter, curr_x_, curr_y_) &&
+    //     checker_->is_on_path(cav3_circle_enter, others_pos_[3].x,
+    //                          others_pos_[3].y)) {
+    //   target_v = 1.5;
+    // }
+    // if (logical_id == 3 &&
+    //     checker_->is_on_path(cav3_circle_enter, curr_x_, curr_y_) &&
+    //     checker_->is_on_path(cav2_circle_enter, others_pos_[2].x,
+    //                          others_pos_[2].y)) {
+    //   target_v = 0.0;
+    // }
+    // if (logical_id == 4 &&
+    //     checker_->is_on_path(cav4_circle_enter, curr_x_, curr_y_) &&
+    //     checker_->is_on_path(cav1_circle_enter, others_pos_[1].x,
+    //                          others_pos_[1].y)) {
+    //   target_v = 0.0;
+    // }
 
     // 2. HV 충돌 체크
     if (checker_->check_hv_collision(my_path_, my_idx_, others_pos_,
@@ -303,10 +317,16 @@ private:
           load_path_json(pkg_path + "/config/cav2_circle_enter_fixed.json");
       cav3_circle_enter =
           load_path_json(pkg_path + "/config/cav3_circle_enter.json");
+      cav1_circle_exit =
+          load_path_json(pkg_path + "/config/cav1_circle_exit.json");
+      cav2_circle_exit =
+          load_path_json(pkg_path + "/config/cav2_circle_exit.json");
       others_paths_[19] =
           load_path_json(pkg_path + "/config/roundabout_lane_two.json");
       others_paths_[20] =
           load_path_json(pkg_path + "/config/roundabout_lane_two.json");
+      cav3_stop = load_path_json(pkg_path + "/config/cav3_stop.json");
+      cav4_stop = load_path_json(pkg_path + "/config/cav4_stop.json");
 
       return true;
     } catch (const std::exception &e) {
@@ -413,7 +433,8 @@ private:
       path48_58, path49_55, path51_46, path52_24, path55_12, path56_59,
       path60_52, path61_47, path60_52_exit, path24_37, path25_36, circle_enter,
       cav1_circle_enter, cav4_circle_enter, cav2_circle_enter,
-      cav3_circle_enter;
+      cav3_circle_enter, cav1_circle_exit, cav2_circle_exit, cav3_stop,
+      cav4_stop;
 
   std::map<int, Point> others_pos_;
   std::map<int, bool> others_received_;
