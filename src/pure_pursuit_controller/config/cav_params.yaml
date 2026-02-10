@@ -20,7 +20,7 @@ problem_three:
   cav2:
     init_speed: 1.5
     lookahead: 1.0
-    path: "CAV_02_3_final_hdi.json"
+    path: "CAV_02_3_final_hdi_fixed.json"
   cav3:
     init_speed: 1.5
     lookahead: 1.0
