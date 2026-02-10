@@ -146,7 +146,7 @@ private:
                                         *(conflict.other_path_ptr), others_pos_,
                                         others_received_, logical_id)) {
             target_v =
-                (conflict.other_id < logical_id) ? 0.0 : 0.5; // 0.5 에서 테스트
+                (conflict.other_id < logical_id) ? 0.0 : 1.0; // 0.5 에서 테스트
             if (logical_id == 2 &&
                 checker_->is_on_path(path60_52_exit, curr_x_, curr_y_))
               target_v = v_; // cav_param 에서 받은 v
