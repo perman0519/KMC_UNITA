@@ -166,7 +166,7 @@ private:
     }
 
     if (checker_->is_on_path(circle_path_, curr_x_, curr_y_)) { // 원형 교차로안에서 무조건 v1.5
-      target_v = 1.5;
+      target_v = 1.0;
     }
 
     // 3. 브레이크 로직 판별
