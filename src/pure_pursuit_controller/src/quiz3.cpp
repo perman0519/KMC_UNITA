@@ -165,8 +165,9 @@ private:
       target_v = 0.0;
     }
 
-    if (checker_->is_on_path(circle_path_, curr_x_, curr_y_) && target_v > 0.01)
-      target_v = 1.5; // todo: hv 속도를 받아서 처리 해야됨
+    if (checker_->is_on_path(circle_path_, curr_x_, curr_y_)) { // 원형 교차로안에서 무조건 v1.5
+      target_v = 1.5;
+    }
 
     // 3. 브레이크 로직 판별
     bool should_brake = (target_v == 0.0); // target_v가 0이면 브레이크 true

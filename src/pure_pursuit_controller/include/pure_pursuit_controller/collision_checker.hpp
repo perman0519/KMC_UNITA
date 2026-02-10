@@ -39,7 +39,7 @@ public:
                                                others_pos.at(id).y);
 
       double my_accum = 0.0;
-      for (int i = my_idx; i < my_path_size - 1 && my_accum < 0.9; ++i) {
+      for (int i = my_idx; i < my_path_size - 1 && my_accum < 1.0; ++i) {
         double dx_my = my_path.X[i + 1] - my_path.X[i];
         double dy_my = my_path.Y[i + 1] - my_path.Y[i];
         my_accum += std::sqrt(dx_my * dx_my + dy_my * dy_my);
@@ -117,7 +117,7 @@ public:
 private:
   int find_closest_index_internal(const Path &path, double x, double y) {
     int idx = 0;
-    double min_sq_d = 1.0e18; // Use a large number, (1e9)^2
+    double min_sq_d = 1.0e18; // Use a larg dxe number, (1e9)^2
 
     int path_size = static_cast<int>(path.X.size());
     for (int i = 0; i < path_size; ++i) {
