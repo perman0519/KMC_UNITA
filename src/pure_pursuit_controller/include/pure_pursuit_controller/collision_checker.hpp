@@ -87,7 +87,7 @@ public:
     double dist_th = 0.25;
     double dist_sq_threshold = dist_th * dist_th; // 의미:
 
-    for (int i = my_idx; i < my_path_size - 1 && my_accum < 1.3; ++i) {
+    for (int i = my_idx; i < my_path_size - 1 && my_accum < 1.0; ++i) {
       double dx_my = my_path.X[i + 1] - my_path.X[i];
       double dy_my = my_path.Y[i + 1] - my_path.Y[i];
       my_accum += std::sqrt(dx_my * dx_my + dy_my * dy_my);
