@@ -64,7 +64,7 @@ public:
 
     init_other_subs(qos);
     timer_ = this->create_wall_timer(
-        25ms, std::bind(&PurePursuitNode::control_loop, this));
+        50ms, std::bind(&PurePursuitNode::control_loop, this));
 
     RCLCPP_INFO(this->get_logger(),
                 "Pure Pursuit Node Initialized for Domain ID: %zu", domain_id_);
@@ -106,8 +106,13 @@ private:
       }
 
       double elapsed = (this->now() - wait_starttime_).seconds();
-
-      if (elapsed < 3.0) {
+      double wait_duration = 0.0;
+      if (domain_id_ == 1 || domain_id_ == 2) {
+        wait_duration = 3.0; // CAV1은 대기 없음
+      } else {
+        wait_duration = 8.0; // CAV2, CAV3, CAV4는 3초 대기
+      }
+      if (elapsed < wait_duration) {
         geometry_msgs::msg::Accel stop_msg;
         stop_msg.linear.x = 0.0;
         stop_msg.angular.z = 0.0;
@@ -160,8 +165,9 @@ private:
       target_v = 0.0;
     }
 
-    if (checker_->is_on_path(circle_path_, curr_x_, curr_y_) && target_v > 0.01)
-      target_v = 1.5; // todo: hv 속도를 받아서 처리 해야됨
+    if (checker_->is_on_path(circle_path_, curr_x_, curr_y_)) { // 원형 교차로안에서 무조건 v1.5
+      target_v = 1.5;
+    }
 
     // 3. 브레이크 로직 판별
     bool should_brake = (target_v == 0.0); // target_v가 0이면 브레이크 true
@@ -262,7 +268,17 @@ private:
       path60_52 = load_path_json(pkg_path + "/config/60_52.json");
       path61_47 = load_path_json(pkg_path + "/config/61_47_fixed.json");
       path60_52_exit = load_path_json(pkg_path + "/config/60_52_fixed.json");
-
+      path24_37 = load_path_json(pkg_path + "/config/path_24_37.json");
+      path25_36 = load_path_json(pkg_path + "/config/path_25_36.json");
+      circle_enter = load_path_json(pkg_path + "/config/circle_enter.json");
+      cav1_circle_enter =
+          load_path_json(pkg_path + "/config/cav1_circle_enter.json");
+      cav4_circle_enter =
+          load_path_json(pkg_path + "/config/cav4_circle_enter.json");
+      cav2_circle_enter =
+          load_path_json(pkg_path + "/config/cav2_circle_enter.json");
+      cav3_circle_enter =
+          load_path_json(pkg_path + "/config/cav3_circle_enter.json");
       others_paths_[19] =
           load_path_json(pkg_path + "/config/roundabout_lane_two.json");
       others_paths_[20] =
@@ -319,6 +335,8 @@ private:
       my_active_rules_.push_back({&path9_56, {{4, &path8_11}}});
       my_active_rules_.push_back(
           {&path56_59, {{2, &path49_55}, {2, &path60_52}, {4, &path61_47}}});
+      my_active_rules_.push_back(
+          {&cav1_circle_enter, {{4, &cav4_circle_enter}}});
     } else if (tid == 2) {
       my_active_rules_.push_back(
           {&path60_52, {{1, &path56_59}, {1, &path51_46}, {3, &path48_58}}});
@@ -326,16 +344,22 @@ private:
       my_active_rules_.push_back(
           {&path49_55, {{1, &path51_46}, {1, &path56_59}, {4, &path61_47}}});
       my_active_rules_.push_back({&path55_12, {{4, &path8_11}}});
+      my_active_rules_.push_back(
+          {&cav2_circle_enter, {{3, &cav3_circle_enter}}});
     } else if (tid == 3) {
       my_active_rules_.push_back(
           {&path22_25, {{1, &path21_51}, {2, &path52_24}}});
       my_active_rules_.push_back(
           {&path48_58, {{1, &path51_46}, {2, &path60_52}}});
+      my_active_rules_.push_back(
+          {&cav3_circle_enter, {{2, &cav2_circle_enter}}});
     } else if (tid == 4) {
       my_active_rules_.push_back(
           {&path61_47, {{1, &path56_59}, {2, &path49_55}}});
       my_active_rules_.push_back(
           {&path8_11, {{1, &path9_56}, {2, &path55_12}}});
+      my_active_rules_.push_back(
+          {&cav4_circle_enter, {{1, &cav1_circle_enter}}});
     }
   }
 
@@ -363,7 +387,9 @@ private:
 
   Path my_path_, circle_path_, path8_11, path9_56, path21_51, path22_25,
       path48_58, path49_55, path51_46, path52_24, path55_12, path56_59,
-      path60_52, path61_47, path60_52_exit;
+      path60_52, path61_47, path60_52_exit, path24_37, path25_36, circle_enter,
+      cav1_circle_enter, cav4_circle_enter, cav2_circle_enter,
+      cav3_circle_enter;
 
   std::map<int, Point> others_pos_;
   std::map<int, bool> others_received_;
